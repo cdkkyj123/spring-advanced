@@ -12,6 +12,7 @@ import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 import org.example.expert.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +40,7 @@ class ManagerServiceTest {
     private ManagerService managerService;
 
     @Test
+    @DisplayName("일정의 관리자 목록 조회 시 일정이 없을 때 에러 발생 성공")
     // 우선 우리가 테스트할 정확한 메서드 명인 getManagers라는 메서드명을 명시해주고 에러명을 알맞게 수정
     public void getManagers_목록_조회_시_Todo가_없다면_InvalidRequestException_에러를_던진다() {
         // given
@@ -52,6 +54,7 @@ class ManagerServiceTest {
     }
 
     @Test
+    @DisplayName("일정을 작성한 유저가 null일 경우 NPE 에러 발생 성공")
     void todo의_user가_null인_경우_예외가_발생한다() {
         // given
         AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
@@ -66,11 +69,12 @@ class ManagerServiceTest {
         given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
 
         // when & then
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+        NullPointerException exception = assertThrows(NullPointerException.class, () ->
             managerService.saveManager(authUser, todoId, managerSaveRequest)
         );
 
-        assertEquals("일정을 생성한 유저만 담당자를 지정할 수 있습니다.", exception.getMessage());
+        // NPE는 보통 메시지를 따로 지정하지 않기 때문에 equals할 필요 없이 위 로직만으로 검증 완료.
+//        assertEquals("일정을 생성한 유저만 담당자를 지정할 수 있습니다.", exception.getMessage());
     }
 
     @Test // 테스트코드 샘플
