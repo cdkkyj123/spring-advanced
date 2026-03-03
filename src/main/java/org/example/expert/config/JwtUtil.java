@@ -23,7 +23,7 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secret.key}") // 해당 키를 찾지 못해 발생한 문제임을 인지하여 application.yml 파일 생성하여 해결
     private String secretKeyString;
     private SecretKey key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
