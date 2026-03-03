@@ -9,6 +9,7 @@ import java.util.List;
 @Configuration
 public class CustomWebMvcConfig implements WebMvcConfigurer {
 
+    // 등록되어있지 않아서 발생한 상황임을 인지하여 CustomWebMvcConfig로 등록해줌.
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new AuthUserArgumentResolver());
