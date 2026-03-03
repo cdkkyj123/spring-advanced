@@ -1,5 +1,6 @@
 package org.example.expert.config;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +16,8 @@ class PasswordEncoderTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    void matches_메서드가_정상적으로_동작한다() {
+    @DisplayName("matches 메서드 동작 성공")
+    void matches_성공() {
         // given
         String rawPassword = "testPassword";
         String encodedPassword = passwordEncoder.encode(rawPassword);
