@@ -10,6 +10,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.example.expert.domain.common.dto.AuthUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,19 +34,21 @@ public class Logger {
         try {
 
             // 요청한 사용자의 id
-            // SecurityContextHolder를 사용하지 않았기에
-            // HttpServletRequest를 직접 호출하여 AuthUserArgumentResolver의 내용물을 활용
-            HttpServletRequest request =
-                    ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                            .getRequest();
-
-            AuthUser authUser = (AuthUser) request.getAttribute("authUser");
-            Long userId = authUser.getId();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = null;
+            if (authentication != null && authentication.getPrincipal() instanceof AuthUser) {
+                AuthUser authUser = (AuthUser) authentication.getPrincipal();
+                userId = authUser.getId();
+            }
 
             // API 요청 시각
             LocalDateTime requestTime = LocalDateTime.now();
 
             // API 요청 URL
+            HttpServletRequest request =
+                    ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                            .getRequest();
+
             String requestURL = String.valueOf(request.getRequestURL());
 
             // 요청 본문(RequestBody)
