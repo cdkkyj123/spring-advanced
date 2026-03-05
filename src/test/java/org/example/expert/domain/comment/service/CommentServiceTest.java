@@ -1,6 +1,7 @@
 package org.example.expert.domain.comment.service;
 
 import org.example.expert.domain.comment.dto.request.CommentSaveRequest;
+import org.example.expert.domain.comment.dto.response.CommentResponse;
 import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
@@ -18,12 +19,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
@@ -75,5 +80,39 @@ class CommentServiceTest {
 
         // then
         assertNotNull(result);
+    }
+
+    private final User user1 = new User("test1@test.com", "Admin", UserRole.ADMIN);
+    private final User user2 = new User("test2@test.com", "User", UserRole.USER);
+
+    private final Todo todo1 = new Todo("title1", "contents1", "맑음", user1);
+    private final Todo todo2 = new Todo("title2", "contents2", "맑음", user1);
+    private final Todo todo3 = new Todo("title3", "contents3", "맑음", user2);
+
+    private final Comment comment1 = new Comment("good1", user1, todo1);
+    private final Comment comment2 = new Comment("good1", user2, todo1);
+    private final Comment comment3 = new Comment("good1", user1, todo2);
+    private final Comment comment4 = new Comment("good1", user1, todo3);
+    private final Comment comment5 = new Comment("good1", user2, todo3);
+
+    @Test
+    @DisplayName("전체 조회 정상 동작 성공")
+    public void getComments_성공() {
+
+        // given
+        long todoId = 1L;
+
+        List<Comment> comments = new ArrayList<>();
+        comments.add(comment1);
+
+        given(commentRepository.findByTodoIdWithUser(todoId)).willReturn(comments);
+
+        // when
+        List<CommentResponse> result = commentService.getComments(todoId);
+
+        // then
+        verify(commentRepository, times(1)).findByTodoIdWithUser(todoId);
+        assertEquals(comments.get(0).getId(), result.get(0).getId());
+        assertEquals(user1.getId(), result.get(0).getUser().getId());
     }
 }
