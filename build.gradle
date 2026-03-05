@@ -84,6 +84,8 @@ jacocoTestReport {
                     "**/Todo**",
                     "**/Comment**",
                     "**/Manager**",
+                    // config 클래스
+                    "**/*Config**",
             ])
         }))
     }
